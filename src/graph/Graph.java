@@ -7,7 +7,7 @@ public interface Graph
 	public void addVertices(Vertex[] vertices);
 	public void removeVertex(Vertex vertex);
 	public void removeVertices(Vertex[] vertices);
-	public void connect(Vertex one, Vertex two);
+	public Edge connect(Vertex one, Vertex two);
 	public void disconnect(Vertex vertex);
 	public void disconnect(Vertex beginning, Vertex end);
 	public Vertex[] getNeighbours(Vertex vertex);
