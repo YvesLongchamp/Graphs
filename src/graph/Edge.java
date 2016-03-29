@@ -49,25 +49,6 @@ public class Edge
 	}
 
 /**
- * Giving one vertex, it gives you the neighbour.
- * @param vertex If the given vertex correspond to one side of the edge, it gives you the vertex on the other side.
- * @return null if the given vertex is null or if the edge is directed and the given vertex is at the end of the edge. Else it will return 
- */
-	public Vertex getNeighbour(Vertex vertex)
-	{
-		if(vertex == null)
-			return null;
-
-		if(vertex == beginning)
-			return end;
-
-		if(vertex == end)
-			return (directed) ? null : beginning;
-
-		else
-			return null;
-	}
-/**
  * Sets the graph that the edge belongs to to another value.
  * @param parent The gaph the edge belongs to.
  */
@@ -92,6 +73,26 @@ public class Edge
 	public boolean isDirected()
 	{
 		return directed;
+	}
+
+/**
+ * Giving one vertex, it gives you the neighbour.
+ * @param vertex If the given vertex correspond to one side of the edge, it gives you the vertex on the other side.
+ * @return null if the given vertex is null or if the edge is directed and the given vertex is at the end of the edge. Else it will return 
+ */
+	public Vertex getNeighbour(Vertex vertex)
+	{
+		if(vertex == null)
+			return null;
+
+		if(vertex == beginning)
+			return end;
+
+		if(vertex == end)
+			return (directed) ? null : beginning;
+
+		else
+			return null;
 	}
 
 }

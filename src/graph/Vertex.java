@@ -56,12 +56,4 @@ public class Vertex
 	{
 		return value;
 	}
-	
-	public boolean equals(Vertex vertex)
-	{
-		if(vertex == null)
-			return false;
-		
-		return value.equals(vertex.value);
-	}
 }
