@@ -1,0 +1,346 @@
+import graph.Edge;
+import graph.Graph;
+import graph.Vertex;
+
+
+public class GraphImpl implements Graph {
+	int[][] adjacencyMatrix;
+	Vertex[] verticesTable;
+	Edge[][] edgesTable;
+	int index = 0;
+	int size = 10;
+	boolean directed = false;
+
+	/**
+	 * Constructor of the implementation of the graph given.
+	 */
+	public GraphImpl() {
+		// int[][] incidenceMatrix = new int[size][(size)(size-1)/2]
+		adjacencyMatrix = new int[size][size];
+		verticesTable = new Vertex[size];
+		edgesTable = new Edge[size][size];
+	}
+
+	/**
+	 * Another constructor, but where the size is define by an argument.
+	 * 
+	 * @param size
+	 *            is the size of the graph we want, the number of the vertices.
+	 *            This is because we have to use tables instead of the lists.
+	 */
+	public GraphImpl(int size) {
+		this.size = size;
+		adjacencyMatrix = new int[this.size][this.size];
+		verticesTable = new Vertex[this.size];
+		edgesTable = new Edge[size][size];
+	}
+
+	/**
+	 * Another constructor, but where the size is define by an argument.
+	 * 
+	 * @param size
+	 *            is the size of the graph we want, the number of the vertices.
+	 *            This is because we have to use tables instead of the lists.
+	 */
+	public GraphImpl(int size, boolean directed) {
+		this.size = size;
+		adjacencyMatrix = new int[this.size][this.size];
+		verticesTable = new Vertex[this.size];
+		edgesTable = new Edge[size][size];
+		this.directed = directed;
+	}
+
+	/**
+	 * A method to add an Object to the graph.
+	 * 
+	 * @param arg0
+	 *            the object we want to add.
+	 * 
+	 * @return Vertex a vertex, the one that we were adding to the graph.
+	 */
+	public Vertex addValue(Object arg0) {
+		Vertex test = new Vertex(arg0);
+		addVertex(test);
+		return test;
+	}
+
+	/**
+	 * A method to add a Vertex to the graph. This method is not complete,
+	 * because we need the graph to make it the parent of the vertex.
+	 * 
+	 * @param arg0
+	 *            the Vertex we want to add.
+	 */
+	public void addVertex(Vertex arg0) {
+
+		if (index >= size - 1) {
+			System.out.println("No more room for this Vertex, sorry.");
+		} else {
+			verticesTable[index] = arg0;
+			for (int i = 0; i < size - 1; i++) {
+				adjacencyMatrix[index][i] = 0;
+			}
+			index++;
+		}
+
+	}
+
+	/**
+	 * A method to add some vertices in one command.
+	 * 
+	 * @param arg0
+	 *            the table of the vertices we want to add.
+	 */
+	public void addVertices(Vertex[] arg0) {
+
+		if (arg0.length > (size - 1 - index)) {
+			System.out
+					.println("There is nor enough room for all the vertices, sorry.");
+		} else {
+			for (int i = 0; i < size; i++) {
+				addVertex(arg0[i]);
+			}
+		}
+	}
+
+	/**
+	 * A method to connect two vertices together.
+	 * 
+	 * @param arg0
+	 *            the beginning of the edge and the first vertex.
+	 * 
+	 * @param arg1
+	 *            the end of the edge and the last vertex.
+	 * 
+	 * @return Edge the edge that is just created.
+	 */
+	public Edge connect(Vertex arg0, Vertex arg1) {
+
+		Edge edge = new Edge();
+		int i = whereIsTheVertex(arg0);
+		int j = whereIsTheVertex(arg1);
+
+		if (i < 0) {
+			System.out
+					.println("The first vertex isn't in the graph, add it first please.");
+			return null;
+		} else {
+			if (j < 0) {
+				System.out
+						.println("The second vertex isn't in the graph, add it first please.");
+			} else {
+				adjacencyMatrix[i][j] = 1;
+				adjacencyMatrix[j][i] = 1;
+				edgesTable[j][i] = edge;
+				edgesTable[i][j] = edge; // here, this is where the edge is
+											// undirected.
+			}
+		}
+		return edge;
+	}
+
+	/**
+	 * A checking method to see if the Object is in the graph or not.
+	 * 
+	 * @param arg0
+	 *            , the concerned object.
+	 * @return a boolean, true if he is in, false if not.
+	 */
+	public boolean contains(Object arg0) {
+		Vertex v1 = new Vertex(arg0);
+		return contains(v1);
+	}
+
+	/**
+	 * A checking method to see if the Vertex is in the graph or not.
+	 * 
+	 * @param arg0
+	 *            , the vertex we want to check.
+	 * @return a boolean. True if the vertex is in, false if not.
+	 */
+	public boolean contains(Vertex arg0) {
+		int i = index;
+		while (arg0 != verticesTable[i] && i >= 0) {
+			i--;
+		}
+		return (i >= 0);
+	}
+
+	/**
+	 * A method to disconnect a vertex of the graph.
+	 * 
+	 * @param arg0
+	 *            , the vertex we want to disconnect.
+	 */
+	public void disconnect(Vertex arg0) {
+		int j = whereIsTheVertex(arg0);
+		if (j < 0) {
+			System.out
+					.println("This vertex isn't even in the graph, what do you want to disconnect ?");
+		} else {
+			for (int i = 0; i <= index; i++) {
+				adjacencyMatrix[j][i] = 0;
+				edgesTable[j][i] = null;
+			}
+			for (int k = 0; k < size; k++) {
+				adjacencyMatrix[j][k] = 0;
+				edgesTable[j][k] = null;
+			}
+		}
+	}
+
+	/**
+	 * A method to disconnect an Edge of the graph.
+	 * 
+	 * @param arg0
+	 *            , the edge we want to disconnect.
+	 */
+	public void disconnect(Edge arg0) {
+		int j = index;
+		int i = index;
+		while (i >= 0 && arg0 != edgesTable[i][j]) {
+			while (j >= 0 && arg0 != edgesTable[i][j]) {
+				j--;
+			}// j < 0 || arg0 == edgesTable[i][j]
+			i--;
+		}
+		if (j < 0 && i < 0) {
+			System.out.println("This edge isn't in the graph, sorry.");
+		} else {
+			if (!isDirected()) {
+				edgesTable[i][j] = null;
+				adjacencyMatrix[i][j] = 0;
+
+				edgesTable[j][i] = null;
+				adjacencyMatrix[j][i] = 0;
+			} else {
+				edgesTable[i][j] = null;
+			}
+		}
+	}
+
+	// qsfgvefgsreht
+	/**
+	 * A method that delete (if it exists) edge between the two Vertex
+	 * 
+	 * @param arg0
+	 *            , first Vertex linked.
+	 * @param arg1
+	 *            , second Vertex linked.
+	 */
+	public void disconnect(Vertex arg0, Vertex arg1) {
+		int i = whereIsTheVertex(arg0);
+		int j = whereIsTheVertex(arg1);
+		if (!isDirected()) {
+			edgesTable[i][j] = null;
+			adjacencyMatrix[i][j] = 0;
+
+			edgesTable[j][i] = null;
+			adjacencyMatrix[j][i] = 0;
+		} else {
+			edgesTable[i][j] = null;
+		}
+	}
+
+	/**
+	 * A method to get all the Vertices object linked to this one.
+	 * 
+	 * @param arg0
+	 *            , the concerned object.
+	 * @return a table of vertices, that they are relied by an edge to the
+	 *         concerned Vertex.
+	 */
+	public Vertex[] getNeighbours(Vertex arg0) {
+		int i = whereIsTheVertex(arg0);
+		Vertex[] tableOfVertices;
+		if (isDirected()) {
+			tableOfVertices = new Vertex[size * 2];
+		} else {
+			tableOfVertices = new Vertex[size];
+		}
+
+		int t = 0;
+		for (int j = 0; j <= index; j++) {
+			if (adjacencyMatrix[i][j] == 1) {
+				tableOfVertices[t] = verticesTable[j];
+				t++;
+			}
+			if (isDirected()) {
+				for (int z = 0; z <= index; z++) {
+					if (adjacencyMatrix[z][i] == 1) {
+						tableOfVertices[t] = verticesTable[z];
+						t++;
+					}
+				}
+			}
+
+		}
+		return tableOfVertices;
+	}
+
+	/**
+	 * A checking method to see if the Edge is directed.
+	 * 
+	 * @return (At this moment, return the directed argument of this class which
+	 *         is initialized at false)
+	 */
+	public boolean isDirected() {
+		return this.directed;
+	}
+
+	/**
+	 * A method to remove a Vertex.
+	 * 
+	 * @param arg0
+	 *            , the concerned Vertex object.
+	 */
+	public void removeVertex(Vertex arg0) {
+		disconnect(arg0);
+		int i = whereIsTheVertex(arg0);
+		verticesTable[i] = null;
+	}
+
+	/**
+	 * A checking method to see if the Object is in the graph or not.
+	 * 
+	 * @param arg0
+	 *            , the table of Vertices object concerned to delete
+	 */
+	public void removeVertices(Vertex[] arg0) {
+		int i = arg0.length;
+		while (i >= 0) {
+			removeVertex(arg0[i]);
+		}
+	}
+
+	/**
+	 * A method to get size of the table of Vertices.
+	 *
+	 * @return this.size
+	 */
+	public int getSize() {
+		return this.size;
+	}
+
+	/**
+	 * A method to get the table of Vertices.
+	 * 
+	 * @param arg0
+	 *            , the concerned object.
+	 * @return table of Vertices
+	 */
+	public Vertex[] getVertices() {
+		return this.verticesTable;
+	}
+
+	// private methods
+
+	private int whereIsTheVertex(Vertex arg0) {
+		int j = index;
+		while (arg0 != verticesTable[j] && j >= 0) {
+			j--;
+		}
+		return j;
+	}
+
+}
